@@ -5,6 +5,7 @@ import { TYPE_SINGLE_DATE, TYPE_RANGE, TYPE_MUTLI_DATE } from './shared/constant
 import { useLocaleUtils, useLocaleLanguage } from './shared/hooks';
 
 import { Header, MonthSelector, YearSelector, DaysList } from './components';
+import './DatePicker.scss';
 
 const Calendar = ({
   value,
@@ -182,14 +183,16 @@ const Calendar = ({
 Calendar.defaultProps = {
   minimumDate: null,
   maximumDate: null,
-  colorPrimary: '#0eca2d',
+  colorPrimary: 'rgba(0, 67, 122, 1)',
   colorPrimaryLight: '#cff4d5',
   slideAnimationDuration: '0.4s',
   calendarClassName: '',
-  locale: 'en',
+  locale: 'ru',
   value: null,
   renderFooter: () => null,
   customDaysClassName: [],
 };
 
-export { Calendar };
+const Calend = (props) => <Calendar {...props} value={{ year: 2021, month: 11, day: 21 }} />;
+
+export { Calendar, Calend };

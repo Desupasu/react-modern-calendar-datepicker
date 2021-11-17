@@ -3,6 +3,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import { terser } from 'rollup-plugin-terser';
+import scss from 'rollup-plugin-scss';
 
 const config = {
   input: 'src/index.js',
@@ -14,6 +15,7 @@ const config = {
   external: ['react', 'react-dom'],
   plugins: [
     resolve(),
+    scss(),
     babel({
       exclude: /node_modules/,
     }),

@@ -1,13 +1,9 @@
-import jalaali from 'jalaali-js';
-
 import {
   GREGORIAN_MONTHS,
-  PERSIAN_MONTHS,
   GREGORIAN_WEEK_DAYS,
-  PERSIAN_WEEK_DAYS,
-  PERSIAN_NUMBERS,
+  RUSSIAN_MONTHS,
+  RUSSIAN_WEEK_DAYS,
 } from './constants';
-import { toExtendedDay } from './generalUtils';
 
 const localeLanguages = {
   en: {
@@ -39,40 +35,34 @@ const localeLanguages = {
     yearLetterSkip: 0,
     isRtl: false,
   },
-  fa: {
-    months: PERSIAN_MONTHS,
-    weekDays: PERSIAN_WEEK_DAYS,
-    weekStartingIndex: 1,
-    getToday({ year, month, day }) {
-      const { jy, jm, jd } = jalaali.toJalaali(year, month, day);
-      return { year: jy, month: jm, day: jd };
+  ru: {
+    months: RUSSIAN_MONTHS,
+    weekDays: RUSSIAN_WEEK_DAYS,
+    weekStartingIndex: 0,
+    getToday(gregorainTodayObject) {
+      return gregorainTodayObject;
     },
     toNativeDate(date) {
-      const gregorian = jalaali.toGregorian(...toExtendedDay(date));
-      return new Date(gregorian.gy, gregorian.gm - 1, gregorian.gd);
+      return new Date(date.year, date.month - 1, date.day);
     },
     getMonthLength(date) {
-      return jalaali.jalaaliMonthLength(date.year, date.month);
+      return new Date(date.year, date.month, 0).getDate();
     },
     transformDigit(digit) {
-      return digit
-        .toString()
-        .split('')
-        .map(letter => PERSIAN_NUMBERS[Number(letter)])
-        .join('');
+      return digit;
     },
-    nextMonth: 'ماه بعد',
-    previousMonth: 'ماه قبل',
-    openMonthSelector: 'نمایش انتخابگر ماه',
-    openYearSelector: 'نمایش انتخابگر سال',
-    closeMonthSelector: 'بستن انتخابگر ماه',
-    closeYearSelector: 'بستن انتخابگر ماه',
-    from: 'از',
-    to: 'تا',
-    defaultPlaceholder: 'انتخاب...',
-    digitSeparator: '،',
-    yearLetterSkip: -2,
-    isRtl: true,
+    nextMonth: 'Следующий месяц',
+    previousMonth: 'Предыдущий месяц',
+    openMonthSelector: 'Открыть выбор месяца',
+    openYearSelector: 'Открыть выбор года',
+    closeMonthSelector: 'Закрыть выбор месяца',
+    closeYearSelector: 'Закрыть выбор года',
+    from: 'с',
+    to: 'по',
+    defaultPlaceholder: 'Выбор...',
+    digitSeparator: ',',
+    yearLetterSkip: 0,
+    isRtl: false,
   },
 };
 

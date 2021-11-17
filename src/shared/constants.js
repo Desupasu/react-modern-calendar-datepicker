@@ -1,20 +1,3 @@
-export const PERSIAN_NUMBERS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-
-export const PERSIAN_MONTHS = [
-  'فروردین',
-  'اردیبهشت',
-  'خرداد',
-  'تیر',
-  'مرداد',
-  'شهریور',
-  'مهر',
-  'آبان',
-  'آذر',
-  'دی',
-  'بهمن',
-  'اسفند',
-];
-
 export const GREGORIAN_MONTHS = [
   'January',
   'February',
@@ -30,44 +13,7 @@ export const GREGORIAN_MONTHS = [
   'December',
 ];
 
-export const PERSIAN_WEEK_DAYS = [
-  {
-    name: 'شنبه',
-    short: 'ش',
-  },
-  {
-    name: 'یکشنبه',
-    short: 'ی',
-  },
-  {
-    name: 'دوشنبه',
-    short: 'د',
-  },
-  {
-    name: 'سه شنبه',
-    short: 'س',
-  },
-  {
-    name: 'چهارشنبه',
-    short: 'چ',
-  },
-  {
-    name: 'پنجشنبه',
-    short: 'پ',
-  },
-  {
-    name: 'جمعه',
-    short: 'ج',
-    isWeekend: true,
-  },
-];
-
 export const GREGORIAN_WEEK_DAYS = [
-  {
-    name: 'Sunday',
-    short: 'S',
-    isWeekend: true,
-  },
   {
     name: 'Monday',
     short: 'M',
@@ -91,6 +37,59 @@ export const GREGORIAN_WEEK_DAYS = [
   {
     name: 'Saturday',
     short: 'S',
+    isWeekend: true,
+  },
+  {
+    name: 'Sunday',
+    short: 'S',
+    isWeekend: true,
+  },
+];
+
+export const RUSSIAN_MONTHS = [
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
+];
+
+export const RUSSIAN_WEEK_DAYS = [
+  {
+    name: 'Понедельник',
+    short: 'пн',
+  },
+  {
+    name: 'Вторник',
+    short: 'вт',
+  },
+  {
+    name: 'Среда',
+    short: 'ср',
+  },
+  {
+    name: 'Четверг',
+    short: 'чт',
+  },
+  {
+    name: 'Пятница',
+    short: 'пт',
+  },
+  {
+    name: 'Суббота',
+    short: 'сб',
+    isWeekend: true,
+  },
+  {
+    name: 'Воскресенье',
+    short: 'вс',
     isWeekend: true,
   },
 ];

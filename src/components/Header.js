@@ -18,6 +18,7 @@ const Header = ({
 }) => {
   const headerElement = useRef(null);
   const monthYearWrapperElement = useRef(null);
+  const yearWrapperElement = useRef(null);
 
   const { getMonthName, isBeforeDate, getLanguageDigits } = useLocaleUtils(locale);
   const {
@@ -35,15 +36,23 @@ const Header = ({
     animateContent({
       direction: monthChangeDirection,
       parent: monthYearWrapperElement.current,
+      type: 'month',
+    });
+    animateContent({
+      direction: monthChangeDirection,
+      parent: yearWrapperElement.current,
+      type: 'year',
     });
   }, [monthChangeDirection]);
 
   useEffect(() => {
     const isOpen = isMonthSelectorOpen || isYearSelectorOpen;
     const monthText = headerElement.current.querySelector(
-      '.Calendar__monthYear.-shown .Calendar__monthText',
+      '.Calendar__stayShown',
     );
-    const yearText = monthText.nextSibling;
+    const yearText = headerElement.current.querySelector(
+      '.Calendar__monthYear.-shown .Calendar__yearText',
+    );
     const hasActiveBackground = element => element.classList.contains('-activeBackground');
     const isInitialRender =
       !isOpen && !hasActiveBackground(monthText) && !hasActiveBackground(yearText);
@@ -54,10 +63,6 @@ const Header = ({
     const primaryElement = hasMonthSelectorToggled ? monthText : yearText;
     const secondaryElement = hasMonthSelectorToggled ? yearText : monthText;
 
-    let translateXDirection = hasMonthSelectorToggled ? 1 : -1;
-    if (isRtl) translateXDirection *= -1;
-    const scale = !isOpen ? 0.95 : 1;
-    const translateX = !isOpen ? 0 : `${(translateXDirection * secondaryElement.offsetWidth) / 2}`;
     if (!isOpen) {
       secondaryElement.removeAttribute('aria-hidden');
     } else {
@@ -65,9 +70,9 @@ const Header = ({
     }
     secondaryElement.setAttribute('tabindex', isOpen ? '-1' : '0');
     secondaryElement.style.transform = '';
-    primaryElement.style.transform = `scale(${scale}) ${
+    /* primaryElement.style.transform = `scale(${scale}) ${
       translateX ? `translateX(${translateX}px)` : ''
-    }`;
+    }`; */
     primaryElement.classList.toggle('-activeBackground');
     secondaryElement.classList.toggle('-hidden');
     arrows.forEach(arrow => {
@@ -81,14 +86,16 @@ const Header = ({
         arrow.setAttribute('tabindex', '-1');
       }
     });
-  }, [isMonthSelectorOpen, isYearSelectorOpen]);
+  }, [isMonthSelectorOpen, isRtl, isYearSelectorOpen]);
 
-  const getMonthYearText = isInitialActiveChild => {
+  const getMonthYearText = (isInitialActiveChild, key, startAnimate) => {
     const date = getSlideDate({
       isInitialActiveChild,
       monthChangeDirection,
       activeDate,
-      parent: monthYearWrapperElement.current,
+      parent: key !== undefined ? monthYearWrapperElement.current : yearWrapperElement.current,
+      key,
+      isAnimate: startAnimate,
     });
     const year = getLanguageDigits(date.year);
     const month = getMonthName(date.month);
@@ -112,7 +119,7 @@ const Header = ({
   };
 
   // first button text is the one who shows the current month and year(initial active child)
-  const monthYearButtons = [true, false].map(isInitialActiveChild => {
+  /* const monthYearButtons = [true, false].map(isInitialActiveChild => {
     const { month, year } = getMonthYearText(isInitialActiveChild);
     const isActiveMonth = month === getMonthName(activeDate.month);
     const hiddenStatus = {
@@ -148,40 +155,112 @@ const Header = ({
         </button>
       </div>
     );
+  }); */
+
+  const monthButtons = [false, true, false].map((isInitialActiveChild, key) => {
+    let { month } = getMonthYearText(isInitialActiveChild, key);
+    const isActiveMonth = month === getMonthName(activeDate.month);
+    const hiddenStatus = {
+      ...(isActiveMonth ? {} : { 'aria-hidden': true }),
+    };
+    return (
+      <div
+        onAnimationEnd={(e) => handleSlideAnimationEnd({ target: e.target, key })}
+        onAnimationStart={(e) => {
+          month = getMonthYearText(isInitialActiveChild, key, true).month;
+          e.currentTarget.children[0].textContent = month;
+        }}
+        className={`Calendar__monthYear ${isInitialActiveChild ? '-shown' : key === 0 ? '-hiddenPrevious' : '-hiddenNext'}`}
+        role="presentation"
+        key={String(key)}
+        {...hiddenStatus}
+      >
+        <button
+          onClick={onMonthSelect}
+          type="button"
+          className="Calendar__monthText"
+          aria-label={isMonthSelectorOpen ? closeMonthSelector : openMonthSelector}
+          tabIndex={isActiveMonth ? '0' : '-1'}
+          {...hiddenStatus}
+        >
+          {month}
+        </button>
+      </div>
+    );
+  });
+
+  const yearButtons = [true, false].map((isInitialActiveChild) => {
+    const { month, year } = getMonthYearText(isInitialActiveChild);
+    const isActiveMonth = month === getMonthName(activeDate.month);
+    const hiddenStatus = {
+      ...(isActiveMonth ? {} : { 'aria-hidden': true }),
+    };
+    return (
+      <div
+        onAnimationEnd={handleSlideAnimationEnd}
+        className={`Calendar__monthYear ${isInitialActiveChild ? '-shown' : '-hiddenNext'}`}
+        role="presentation"
+        key={String(isInitialActiveChild)}
+        {...hiddenStatus}
+      >
+        <button
+          onClick={onYearSelect}
+          type="button"
+          className="Calendar__yearText"
+          aria-label={isYearSelectorOpen ? closeYearSelector : openYearSelector}
+          tabIndex={isActiveMonth ? '0' : '-1'}
+          {...hiddenStatus}
+        >
+          {year}
+        </button>
+      </div>
+    );
   });
 
   return (
     <div ref={headerElement} className="Calendar__header">
-      <button
-        className="Calendar__monthArrowWrapper -right"
-        onClick={() => {
-          onMonthChangeTrigger('PREVIOUS');
-        }}
-        aria-label={previousMonth}
-        type="button"
-        disabled={isPreviousMonthArrowDisabled}
-      >
-        <span className="Calendar__monthArrow" />
-      </button>
-      <div
-        className="Calendar__monthYearContainer"
-        ref={monthYearWrapperElement}
-        data-testid="month-year-container"
-      >
-        &nbsp;
-        {monthYearButtons}
+      <div className="Calendar__header_row">
+        <button
+          className="Calendar__monthArrowWrapper -right"
+          onClick={() => {
+            onMonthChangeTrigger('PREVIOUS');
+          }}
+          aria-label={previousMonth}
+          type="button"
+          disabled={isPreviousMonthArrowDisabled}
+        >
+          <span className="Calendar__monthArrow" />
+        </button>
+        <div
+          className="Calendar__monthYearContainer"
+          ref={yearWrapperElement}
+          data-testid="month-year-container"
+        >
+          &nbsp;
+          {yearButtons}
+        </div>
+        <button
+          className="Calendar__monthArrowWrapper -left"
+          onClick={() => {
+            onMonthChangeTrigger('NEXT');
+          }}
+          aria-label={nextMonth}
+          type="button"
+          disabled={isNextMonthArrowDisabled}
+        >
+          <span className="Calendar__monthArrow" />
+        </button>
       </div>
-      <button
-        className="Calendar__monthArrowWrapper -left"
-        onClick={() => {
-          onMonthChangeTrigger('NEXT');
-        }}
-        aria-label={nextMonth}
-        type="button"
-        disabled={isNextMonthArrowDisabled}
-      >
-        <span className="Calendar__monthArrow" />
-      </button>
+      <div className="Calendar__header_row">
+        <div
+          className="Calendar__monthYearContainer Calendar__stayShown"
+          ref={monthYearWrapperElement}
+          data-testid="month-year-container"
+        >
+          &nbsp;
+          {monthButtons}
+        </div>
+      </div>
     </div>
   );
 };

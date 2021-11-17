@@ -5,6 +5,7 @@ import {
   deepCloneObject,
   isSameDay,
   createUniqueRange,
+  createFixedRange,
   getValueType,
 } from '../shared/generalUtils';
 import { TYPE_SINGLE_DATE, TYPE_RANGE, TYPE_MUTLI_DATE } from '../shared/constants';
@@ -132,7 +133,7 @@ const DaysList = ({
     const customDayItemClassName = customDaysClassName.find(day => isSameDay(dayItem, day));
     const classNames = ''
       .concat(isToday && !isSelected ? ` -today ${calendarTodayClassName}` : '')
-      .concat(!dayItem.isStandard ? ' -blank' : '')
+      .concat(!dayItem.isStandard ? ' -notStandard' : '')
       .concat(dayItem.isWeekend && shouldHighlightWeekends ? ' -weekend' : '')
       .concat(customDayItemClassName ? ` ${customDayItemClassName.className}` : '')
       .concat(isSelected ? ` -selected ${calendarSelectedDayClassName}` : '')
@@ -145,14 +146,26 @@ const DaysList = ({
 
   const getViewMonthDays = date => {
     // to match month starting date with the correct weekday label
-    const prependingBlankDays = createUniqueRange(getMonthFirstWeekday(date), 'starting-blank');
+    const prevDays = createFixedRange({ ...getMonthFirstWeekday(date) }, 'prev-month').map(day => ({
+      ...day,
+      isStandard: false,
+      month: date.month,
+      year: date.year,
+    }));
     const standardDays = createUniqueRange(getMonthLength(date)).map(day => ({
       ...day,
       isStandard: true,
       month: date.month,
       year: date.year,
     }));
-    const allDays = [...prependingBlankDays, ...standardDays];
+    const lastDays = createUniqueRange(getMonthLength(date), 'next-month').map(day => ({
+      ...day,
+      isStandard: false,
+      month: date.month,
+      year: date.year,
+    }));
+    const allDays = [...prevDays, ...standardDays, ...lastDays];
+
     return allDays;
   };
 
@@ -214,7 +227,7 @@ const DaysList = ({
         role="gridcell"
         data-is-default-selectable={shouldEnableKeyboardNavigation}
       >
-        {!isStandard ? '' : getLanguageDigits(day)}
+        {getLanguageDigits(day)}
       </div>
     );
   };

@@ -106,7 +106,7 @@ const DatePicker = ({
     ) {
       calendarContainerElement.current.classList.add('-top');
     }
-  }, [isCalendarOpen]);
+  }, [calendarPopperPosition, isCalendarOpen]);
 
   const handleCalendarChange = newValue => {
     const valueType = getValueType(value);

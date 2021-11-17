@@ -3,6 +3,13 @@ import { TYPE_SINGLE_DATE, TYPE_RANGE, TYPE_MUTLI_DATE } from './constants';
 /*
   These utility functions don't depend on locale of the date picker(Persian or Gregorian)
 */
+const createFixedRange = ({ firstIndex, lastIndex }, startingId) =>
+  lastIndex - firstIndex > 0
+    ? Array.from(Array(lastIndex - firstIndex).keys()).map(key => ({
+        value: key + firstIndex,
+        id: `${startingId}-${key}`,
+      }))
+    : [];
 
 const createUniqueRange = (number, startingId) =>
   Array.from(Array(number).keys()).map(key => ({
@@ -24,16 +31,16 @@ const shallowClone = value => ({ ...value });
 const deepCloneObject = obj =>
   JSON.parse(JSON.stringify(obj, (key, value) => (typeof value === 'undefined' ? null : value)));
 
-const getDateAccordingToMonth = (date, direction) => {
-  const toSum = direction === 'NEXT' ? 1 : -1;
+const getDateAccordingToMonth = (date, direction, step = 1) => {
+  const toSum = direction === 'NEXT' ? step : -step;
   let newMonthIndex = date.month + toSum;
   let newYear = date.year;
   if (newMonthIndex < 1) {
-    newMonthIndex = 12;
+    newMonthIndex += 12;
     newYear -= 1;
   }
   if (newMonthIndex > 12) {
-    newMonthIndex = 1;
+    newMonthIndex -= 12;
     newYear += 1;
   }
   const newDate = { year: newYear, month: newMonthIndex, day: 1 };
@@ -53,7 +60,7 @@ const getValueType = value => {
     return TYPE_SINGLE_DATE;
   }
   throw new TypeError(
-    `The passed value is malformed! Please make sure you're using one of the valid value types for date picker.`,
+    "The passed value is malformed! Please make sure you're using one of the valid value types for date picker.",
   );
 };
 
@@ -66,4 +73,5 @@ export {
   deepCloneObject,
   getDateAccordingToMonth,
   getValueType,
+  createFixedRange,
 };

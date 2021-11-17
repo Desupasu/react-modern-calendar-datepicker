@@ -32,7 +32,7 @@ const YearSelector = ({
     );
     if (!activeSelectorYear) {
       throw new RangeError(
-        `Provided value for year is out of selectable year range. You're probably using a wrong locale prop value or your provided value's locale is different from the date picker locale. Try changing the 'locale' prop or the value you've provided.`,
+        'Provided value for year is out of selectable year range. You\'re probably using a wrong locale prop value or your provided value\'s locale is different from the date picker locale. Try changing the \'locale\' prop or the value you\'ve provided.',
       );
     }
     wrapperElement.current.classList[classToggleMethod]('-faded');
