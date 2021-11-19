@@ -43,9 +43,11 @@ const Calendar = ({
       /* istanbul ignore else */
       if (key === 'Tab') calendarElement.current.classList.remove('-noFocusOutline');
     };
-    calendarElement.current.addEventListener('keyup', handleKeyUp, false);
+    if (calendarElement && calendarElement.current)
+      calendarElement.current.addEventListener('keyup', handleKeyUp, false);
     return () => {
-      calendarElement.current.removeEventListener('keyup', handleKeyUp, false);
+      if (calendarElement && calendarElement.current)
+        calendarElement.current.removeEventListener('keyup', handleKeyUp, false);
     };
   });
 
@@ -193,6 +195,6 @@ Calendar.defaultProps = {
   customDaysClassName: [],
 };
 
-const Calend = (props) => <Calendar {...props} value={{ year: 2021, month: 11, day: 21 }} />;
+const Calend = props => <Calendar {...props} value={{ year: 2021, month: 11, day: 21 }} />;
 
 export { Calendar, Calend };
