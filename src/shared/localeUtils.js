@@ -14,7 +14,7 @@ const utils = (locale = 'en') => {
     transformDigit: getLanguageDigits,
   } = typeof locale === 'string' ? getLocaleDetails(locale) : locale;
 
-  const daysInMonth = (date) => {
+  const daysInMonth = date => {
     return new Date(date.year, date.month, 0).getDate();
   };
 
@@ -35,7 +35,10 @@ const utils = (locale = 'en') => {
     const weekday = gregorianDate.getDay();
     gregorianDate.setDate(0);
     const dayIndex = (weekday + weekStartingIndex) % 7 || 7;
-    return { firstIndex: gregorianDate.getDate() - dayIndex + 2, lastIndex: gregorianDate.getDate() + 1 };
+    return {
+      firstIndex: gregorianDate.getDate() - dayIndex + 2,
+      lastIndex: gregorianDate.getDate() + 1,
+    };
   };
 
   const isBeforeDate = (day1, day2) => {

@@ -1,18 +1,28 @@
 import { getDateAccordingToMonth } from './generalUtils';
 
-const getSlideDate = ({ parent, isInitialActiveChild, activeDate, monthChangeDirection, key, isAnimate }) => {
+const getSlideDate = ({
+  parent,
+  isInitialActiveChild,
+  activeDate,
+  monthChangeDirection,
+  key,
+  isAnimate,
+}) => {
   if (key !== undefined) {
     if (!parent) {
-      return isInitialActiveChild ? activeDate : getDateAccordingToMonth(activeDate, key === 0 ? 'PREVIOUS' : 'NEXT');
+      return isInitialActiveChild
+        ? activeDate
+        : getDateAccordingToMonth(activeDate, key === 0 ? 'PREVIOUS' : 'NEXT');
     }
     if (isAnimate) {
       const weight = monthChangeDirection === 'NEXT' ? 0 : 2;
       if (key === weight) return activeDate;
       if (key === 1) return getDateAccordingToMonth(activeDate, monthChangeDirection);
-      if (key === (2 - weight)) return getDateAccordingToMonth(activeDate, monthChangeDirection, 2);
+      if (key === 2 - weight) return getDateAccordingToMonth(activeDate, monthChangeDirection, 2);
     }
-    console.log(activeDate);
-    return isInitialActiveChild ? activeDate : getDateAccordingToMonth(activeDate, monthChangeDirection === 'NEXT' ? key === 0 ? 'PREVIIOUS' : 'NEXT' : key === 0 ? 'PREVIOUS' : 'NEXT');
+    return isInitialActiveChild
+      ? activeDate
+      : getDateAccordingToMonth(activeDate, key === 0 ? 'PREVIIOUS' : 'NEXT');
   }
   if (!parent) {
     return isInitialActiveChild ? activeDate : getDateAccordingToMonth(activeDate, 'NEXT');
@@ -33,7 +43,7 @@ const animateContent = ({ parent, direction, type }) => {
     const isNextMonth = direction === 'NEXT';
     shownItem.style.transition = '';
     shownItem.classList.add(getAnimationClass(isNextMonth));
-    hiddenItem.forEach((n) => n.classList.add(getAnimationClass(isNextMonth)));
+    hiddenItem.forEach(n => n.classList.add(getAnimationClass(isNextMonth)));
     wrapperChildren.forEach(item => item.classList.add('-shownAnimated'));
     return;
   }

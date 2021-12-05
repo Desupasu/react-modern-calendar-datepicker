@@ -7,6 +7,7 @@ import {
   createUniqueRange,
   createFixedRange,
   getValueType,
+  getDateAccordingToMonth,
 } from '../shared/generalUtils';
 import { TYPE_SINGLE_DATE, TYPE_RANGE, TYPE_MUTLI_DATE } from '../shared/constants';
 import handleKeyboardNavigation from '../shared/keyboardNavigation';
@@ -146,11 +147,13 @@ const DaysList = ({
 
   const getViewMonthDays = date => {
     // to match month starting date with the correct weekday label
+    const prevMonthYear = getDateAccordingToMonth(date, 'PREVIOUS');
+    const nextMonthYear = getDateAccordingToMonth(date, 'NEXT');
     const prevDays = createFixedRange({ ...getMonthFirstWeekday(date) }, 'prev-month').map(day => ({
       ...day,
       isStandard: false,
-      month: date.month,
-      year: date.year,
+      month: prevMonthYear.month,
+      year: prevMonthYear.year,
     }));
     const standardDays = createUniqueRange(getMonthLength(date)).map(day => ({
       ...day,
@@ -161,8 +164,8 @@ const DaysList = ({
     const lastDays = createUniqueRange(getMonthLength(date), 'next-month').map(day => ({
       ...day,
       isStandard: false,
-      month: date.month,
-      year: date.year,
+      month: nextMonthYear.month,
+      year: nextMonthYear.year,
     }));
     const allDays = [...prevDays, ...standardDays, ...lastDays];
 
