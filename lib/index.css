@@ -513,7 +513,8 @@
 .Calendar__sectionWrapper {
   position: relative;
   min-height: 23em;
-  overflow: hidden; }
+  overflow: hidden;
+  height: 68%; }
 
 .Calendar__section {
   display: flex;
